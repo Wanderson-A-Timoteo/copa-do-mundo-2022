@@ -1,11 +1,13 @@
 
-export function App() {
-  return (
-    <div className="h-screen bg-red-700 text-white flex">
-      <div>
+export const Home = () => {
+  return  (
+    <div className="h-screen bg-red-700 text-white p-4 flex flex-col items-center space-y-6">
+      
+      <header className="container flex justify-center max-w-5xl p-4">
         <img src="/images/logo-fundo-vinho.svg" className="w-40"/>
-      </div>
-      <div className="container p-6 flex-1 flex flex-col items-center md:flex-row space-y-6 md:space-y-0 md:space-x-6">
+      </header>
+      
+      <div className="container max-w-5xl flex-1 flex flex-col items-center md:flex-row space-y-6 md:space-y-0 md:space-x-6">
         <div className="md:flex-1 flex justify-center">
           <img src="/images/img.png" className="w-full max-w-sd"/>
         </div>
@@ -28,5 +30,3 @@ export function App() {
     </div>
   )
 }
-
-export default App
