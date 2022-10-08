@@ -17,13 +17,13 @@ export const Home = () => {
             Dê o seu palpite na Copa do Mundo do Catar 2022
           </h1>
           
-          <button className="text-red-700 bg-white text-xl px-8 py-4 rounded-xl">
+          <a href="/signup" className="text-center text-red-700 bg-white text-xl px-8 py-4 rounded-xl">
             Criar minha conta
-          </button>
+          </a>
 
-          <button className="text-withe border border-white text-xl px-8 py-4 rounded-xl">
-            Criar minha conta
-          </button>
+          <a href="/login" className="text-center text-withe border border-white text-xl px-8 py-4 rounded-xl">
+            Fazer Login
+          </a>
         
         </div>
       </div>
