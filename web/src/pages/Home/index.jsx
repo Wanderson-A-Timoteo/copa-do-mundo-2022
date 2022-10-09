@@ -1,4 +1,3 @@
-
 export const Home = () => {
   return  (
     <div className="h-screen bg-red-700 text-white p-4 flex flex-col items-center space-y-6">
