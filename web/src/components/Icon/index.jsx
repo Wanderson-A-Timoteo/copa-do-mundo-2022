@@ -1,4 +1,4 @@
-import { ReactComponet as  back } from './svgs/back.svg'
+import { ReactComponent as  back } from './svgs/back.svg'
 
 const icons = {
     back 
