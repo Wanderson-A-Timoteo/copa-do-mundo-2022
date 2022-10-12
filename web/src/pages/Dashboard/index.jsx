@@ -1,4 +1,4 @@
-import { Icon } from "~/components"
+import { Icon, Card } from "~/components"
 
 
 export const Dashboard = () => (
@@ -23,21 +23,29 @@ export const Dashboard = () => (
             </section>
                 
             <section id="content" className="container max-w-3xl p-4">
-                <div className="rounded-xl border border-gray-300 p-4 text-center space-y-4">
-                    <span className="text-sm md:text-base text-gray-700 font-bold "> 07:00 </span>
-                    
-                    <div className="flex space-x-4 justify-center items-center">
-                        <span className="uppercase">sui</span>
-                        <img src="/images/flags/sui.png" />
-                        
-                        <input type="number" className="bg-red-300 w-[55px] h-[55px] text-red-700 text-xl bg-red-300/[0.2]"/>
-                        <span className="text-red-500 font-bold">x</span>
-                        <input type="number" className="bg-red-300 w-[55px] h-[55px] text-red-700 text-xl bg-red-300/[0.2]"/>
-                        
-                        <img src="/images/flags/cam.png" />
-                        <span className="uppercase">cam</span>
-                    </div>
-                </div>
+                <Card
+                    timeA={{ slug: 'sui' }}
+                    timeB={{ slug: 'cam' }}
+                    match={{ time: '07:00' }}
+                />
+
+                <Card
+                    timeA={{ slug: 'uru' }}
+                    timeB={{ slug: 'cor' }}
+                    match={{ time: '10:00' }}
+                />
+
+                <Card
+                    timeA={{ slug: 'por' }}
+                    timeB={{ slug: 'gan' }}
+                    match={{ time: '13:00' }}
+                />
+
+                <Card
+                    timeA={{ slug: 'bra' }}
+                    timeB={{ slug: 'ser' }}
+                    match={{ time: '16:00' }}
+                />
             </section>
         </main>
     </div>
