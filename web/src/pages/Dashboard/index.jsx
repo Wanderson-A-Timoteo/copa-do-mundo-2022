@@ -2,7 +2,8 @@ import { Icon, Card } from "~/components"
 
 
 export const Dashboard = () => (
-    <div className="">
+    <>
+
         <header className="bg-red-500 text-white p-4">
             <div className="container max-w-3xl flex justify-between p-4">
                 <img src="/images/logo-fundo-vermelho.svg" className="w-28 md:w-40"/> 
@@ -12,7 +13,7 @@ export const Dashboard = () => (
             </div>
         </header>
 
-        <main className="">
+        <main className="space-y-6">
             <section id="header" className="bg-red-500 text-white">
                 <div className="container max-w-3xl space-y-2 p-4">
                     <span>Olá Wanderson</span>
@@ -58,5 +59,5 @@ export const Dashboard = () => (
                 </div>
             </section>
         </main>
-    </div>
+    </>
 )
