@@ -1,5 +1,4 @@
-import { Icon, Card } from "~/components"
-
+import { Icon, Card, DateSelect } from "~/components"
 
 export const Profile = () =>{
     return (
@@ -26,12 +25,7 @@ export const Profile = () =>{
 
                     <h2 className="text-red-500 text-xl font-bold">Seus palpites</h2>
                     
-                    <div className="p-4 flex space-x-4 items-center justify-center">
-                        <Icon name="arrowLeft" className="w-6 bg-red-500" />
-                        <span className="font-bold">24 de Novembro</span>
-                        <Icon name="arrowRight" className="w-6 bg-red-500" />
-
-                    </div>
+                    <DateSelect />
                     
                     <div className="space-y-4">
                         <Card
