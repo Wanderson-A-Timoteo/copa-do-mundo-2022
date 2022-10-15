@@ -1,4 +1,7 @@
 import Router from "@koa/router"
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
 
 export const router = new Router()
 
@@ -17,5 +20,3 @@ router.post('/users', async ctx => {
   ctx.body = user
 
 })
-
-  
