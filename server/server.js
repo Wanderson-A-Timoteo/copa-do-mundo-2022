@@ -1,4 +1,4 @@
-import { app } from "./setup"
+import { app } from "./setup.js"
 
-app.listen(3333)
+app.listen(3000)
 
