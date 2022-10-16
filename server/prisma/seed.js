@@ -1,4 +1,8 @@
-const game = 
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
+
+const games = 
 [
     {
       "gameTime": "2022-11-20T16:00:00Z",
@@ -242,3 +246,13 @@ const game =
       "awayTeam": "bra"
     }
 ]
+
+const main = () =>
+    prisma.game.createMany({
+        data: games
+    })
+
+
+main()
+.then(console.log)
+.catch(console.log)

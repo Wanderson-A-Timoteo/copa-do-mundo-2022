@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "main": "server.js",
   "type": "module",
-  "scripts": {},
+  "scripts": {
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "author": {
     "name": "Wanderson Timoteo",
     "Portfolio": "www.wandersontimoteo.ga"
