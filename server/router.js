@@ -6,7 +6,6 @@ import * as games from "./app/games/index.js"
 
 export const router = new Router();
 
-router.get('/users', users.list)
 router.post('/users', users.create)
 
 //router.get('/hunches', hunches.list)
