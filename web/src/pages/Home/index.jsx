@@ -8,7 +8,7 @@ export const Home = () => {
       
       <div className="container max-w-5xl flex-1 flex flex-col items-center md:flex-row space-y-6 md:space-y-0 md:space-x-6">
         <div className="md:flex-1 flex justify-center">
-          <img src="/images/img.png" className="w-full max-w-sd"/>
+          <img src="/images/catar.png" className="w-full max-w-sd"/>
         </div>
 
         <div className="md:flex-1 flex flex-col space-y-6">
