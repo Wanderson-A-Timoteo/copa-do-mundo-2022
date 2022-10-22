@@ -50,7 +50,8 @@ export const login = async ctx => {
     
     const acessToken = jwt.sign({
         sub: user.id,
-        name: user.name
+        name: user.name,
+        expiresIn: "7d"
     }, process.env.JWT_SECRET)
 
     ctx.body = {
