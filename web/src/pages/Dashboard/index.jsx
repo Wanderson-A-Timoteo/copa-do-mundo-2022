@@ -1,11 +1,32 @@
-import { useLocalStorage } from 'react-use'
+import { useEffect, useState } from 'react'
+import { useAsyncFn, useLocalStorage } from 'react-use'
 import { Navigate } from 'react-router-dom'
 
 import { Icon, Card, DateSelect } from "~/components"
+import axios from 'axios'
+import { format } from 'date-fns'
 
 export const Dashboard = () => {
+    
+    const [currentDate, setDate] = useState('2022-11-20T00:00:00Z')
+
     // Pega user e password armazenado no browser
     const [auth] = useLocalStorage('auth', {})
+    
+    // Busca todos os jogos da API
+    const [state, doFetch] = useAsyncFn( async (params) => {
+        const res = await axios ({
+            method: 'get',
+            baseURL: 'http://localhost:3000',
+            url: '/games',
+            params
+        })
+        return res.data
+    })
+
+    useEffect(() => {
+        doFetch({ gameTime: currentDate })
+    }, [currentDate])
 
     // Se não tiver logado vai para home "/"
     if (!auth?.user?.id) {
@@ -34,33 +55,26 @@ export const Dashboard = () => {
                 </section>
                     
                 <section id="content" className="container max-w-3xl p-4 space-y-4">
-                    
-                    <DateSelect />
+                    {/** Recebe a data inicial que vem do estado (useState)  */}
+                    <DateSelect currentDate={currentDate} onChange={setDate} />
                     
                     <div className="space-y-4">
-                        <Card
-                            timeA={{ slug: 'sui' }}
-                            timeB={{ slug: 'cam' }}
-                            match={{ time: '07:00' }}
-                        />
-
-                        <Card
-                            timeA={{ slug: 'uru' }}
-                            timeB={{ slug: 'cor' }}
-                            match={{ time: '10:00' }}
-                        />
-
-                        <Card
-                            timeA={{ slug: 'por' }}
-                            timeB={{ slug: 'gan' }}
-                            match={{ time: '13:00' }}
-                        />
-
-                        <Card
-                            timeA={{ slug: 'bra' }}
-                            timeB={{ slug: 'ser' }}
-                            match={{ time: '16:00' }}
-                        />
+                        
+                        {/** Se loading mostra carregando jogos  */}
+                        {state.loading && 'Carregando jogos...'}
+                        
+                        {/** Se deu erro em loading mostra msn de erro  */}
+                        {state.error && 'Ops! Algo deu errado'}
+                        
+                        {/** Se terminou o loading e não deu erro, Renderiza na tela todos os jogos da API  */}
+                        {!state.loading && !state.error && state.value?.map(game => (
+                            <Card
+                                homeTeam={{ slug: game.homeTeam }}
+                                awayTem={{ slug: game.awayTeam }}
+                                match={{ time: format(new Date(game.gameTime), 'HH:mm') }}
+                            />
+                        ))}
+                        
                     </div>
                 </section>
             </main>
