@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
+import { Navigate } from 'react-router-dom'
+import { useLocalStorage } from 'react-use'
 
 import { Icon, Input } from '~/components'
 
@@ -12,6 +14,8 @@ const validationSchema = yup.object().shape({
 })
 
 export const Signup = () => {
+
+    const [auth, setAuth] = useLocalStorage('auth', {})
 
     const formik = useFormik({
         onSubmit: async (values) => {
@@ -33,6 +37,10 @@ export const Signup = () => {
         validationSchema
     })
 
+    if (auth.user?.id) {
+        return <Navigate to="/dashboard" replace={true} />
+    }
+    
     return (
         <div className="">
             <header className="p-4 border-b border-red-300">
@@ -90,12 +98,12 @@ export const Signup = () => {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                     />
-                     <button 
+                    <button 
                         className="block w-full text-center text-white bg-red-500 px-6 py-3 rounded-xl disabled:opacity-50" 
                         type='submit' 
-                        disabled={!formik.isValid}
+                        disabled={!formik.isValid || formik.isSubmitting}
                     >
-                        Criar minha conta
+                        {formik.isSubmitting ? 'Carregando...' : 'Criar minha conta'}
                     </button>
                 </form>
             </main>
