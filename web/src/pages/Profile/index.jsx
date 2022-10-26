@@ -1,13 +1,36 @@
-import { useLocalStorage } from 'react-use'
+import { useState, useEffect } from 'react'
+import { useAsyncFn, useLocalStorage } from 'react-use'
 import { Navigate } from 'react-router-dom'
+
+import axios from 'axios'
+import { format } from 'date-fns'
+import { formatISO } from 'date-fns/esm'
 
 import { Icon, Card, DateSelect } from "~/components"
 
+
 export const Profile = () => {
 
+    const [currentDate, setDate] = useState(formatISO(new Date(2022, 10, 20)))
+    
     const [auth, setAuth] = useLocalStorage('auth', {})
 
-    const logout = () => setAuth({})
+    
+    // Busca todos os jogos da API
+    const [state, doFetch] = useAsyncFn( async (params) => {
+        const res = await axios ({
+            method: 'get',
+            baseURL: 'http://localhost:3000',
+            url: '/games',
+            params
+        })
+        return res.data
+    })
+        
+    useEffect(() => {
+        doFetch({ gameTime: currentDate })
+    }, [currentDate])
+    
 
     // Se estiver deslogado vai para login "/"
     if (!auth?.user?.id) {
@@ -19,7 +42,7 @@ export const Profile = () => {
             <header className="bg-red-500 text-white p-4">
                 <div className="container max-w-3xl flex justify-between p-4">
                     <img src="/images/logo-fundo-vermelho.svg" className="w-28 md:w-40"/> 
-                    <div onClick={logout} className="p-2 cursor-pointer font-bold">
+                    <div onClick={() => setAuth({})} className="p-2 cursor-pointer font-bold">
                         Sair
                     </div>
                 </div>
@@ -32,7 +55,7 @@ export const Profile = () => {
                             <Icon name="back" className="w-10" />   
                         </a>
                         <h3 className="text-2xl font-bold">
-                            Wanderson Timóteo
+                            { auth.user.name }
                         </h3>
                     </div>
                 </section>
@@ -41,32 +64,28 @@ export const Profile = () => {
 
                     <h2 className="text-red-500 text-xl font-bold">Seus palpites</h2>
                     
-                    <DateSelect />
+                    {/** Recebe a data inicial que vem do estado (useState)  */}
+                    <DateSelect currentDate={currentDate} onChange={setDate} />
                     
                     <div className="space-y-4">
-                        <Card
-                            timeA={{ slug: 'sui' }}
-                            timeB={{ slug: 'cam' }}
-                            match={{ time: '07:00' }}
-                        />
-
-                        <Card
-                            timeA={{ slug: 'uru' }}
-                            timeB={{ slug: 'cor' }}
-                            match={{ time: '10:00' }}
-                        />
-
-                        <Card
-                            timeA={{ slug: 'por' }}
-                            timeB={{ slug: 'gan' }}
-                            match={{ time: '13:00' }}
-                        />
-
-                        <Card
-                            timeA={{ slug: 'bra' }}
-                            timeB={{ slug: 'ser' }}
-                            match={{ time: '16:00' }}
-                        />
+                        
+                        {/** Se loading mostra carregando jogos  */}
+                        {state.loading && 'Carregando jogos...'}
+                        
+                        {/** Se deu erro em loading mostra msn de erro  */}
+                        {state.error && 'Ops! Algo deu errado'}
+                        
+                        {/** Se terminou o loading e não deu erro, Renderiza na tela todos os jogos da API  */}
+                        {!state.loading && !state.error && state.value?.map(game => (
+                            <Card
+                                key={game.id}
+                                gameId={ game.id }
+                                homeTeam={ game.homeTeam }
+                                awayTem={ game.awayTeam }
+                                gameTime={ format(new Date(game.gameTime), 'HH:mm') }
+                            />
+                        ))}
+                        
                     </div>
                 </section>
             </main>

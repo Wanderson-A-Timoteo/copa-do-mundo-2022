@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react'
 import { useAsyncFn, useLocalStorage } from 'react-use'
 import { Navigate } from 'react-router-dom'
 
-import { Icon, Card, DateSelect } from "~/components"
 import axios from 'axios'
 import { format } from 'date-fns'
+import { formatISO } from 'date-fns/esm'
+
+import { Icon, Card, DateSelect } from "~/components"
 
 export const Dashboard = () => {
     
-    const [currentDate, setDate] = useState('2022-11-20T00:00:00Z')
+    const [currentDate, setDate] = useState(formatISO(new Date(2022, 10, 20)))
 
     // Pega user e password armazenado no browser
     const [auth] = useLocalStorage('auth', {})
@@ -69,9 +71,11 @@ export const Dashboard = () => {
                         {/** Se terminou o loading e não deu erro, Renderiza na tela todos os jogos da API  */}
                         {!state.loading && !state.error && state.value?.map(game => (
                             <Card
-                                homeTeam={{ slug: game.homeTeam }}
-                                awayTem={{ slug: game.awayTeam }}
-                                match={{ time: format(new Date(game.gameTime), 'HH:mm') }}
+                                key={game.id}
+                                gameId={ game.id }
+                                homeTeam={ game.homeTeam }
+                                awayTem={ game.awayTeam }
+                                gameTime={ format(new Date(game.gameTime), 'HH:mm') }
                             />
                         ))}
                         
