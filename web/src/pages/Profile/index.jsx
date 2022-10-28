@@ -1,23 +1,41 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAsyncFn, useLocalStorage } from 'react-use'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 
 import axios from 'axios'
-import { format } from 'date-fns'
-import { formatISO } from 'date-fns/esm'
+import { format, formatISO } from 'date-fns'
 
 import { Icon, Card, DateSelect } from "~/components"
 
 
 export const Profile = () => {
 
+    const params = useParams()
+
     const [currentDate, setDate] = useState(formatISO(new Date(2022, 10, 20)))
-    
+
+    // Pega user e password armazenado no browser
     const [auth, setAuth] = useLocalStorage('auth', {})
 
+    const [{value: user, loading, error}, fetchHunches] = useAsyncFn(async () => {
+        const res = await axios ({
+            method: 'get',
+            baseURL: 'http://localhost:3000',
+            url: `/${params.username}`
+        })
+        const hunches = res.data.hunches.reduce((acc, hunch) => {
+            acc[hunch.gameId] = hunch
+            return acc
+        }, {})
+
+        return {
+            ...res.data,
+            hunches
+        }
+    })
     
     // Busca todos os jogos da API
-    const [state, doFetch] = useAsyncFn( async (params) => {
+    const [games, fechGames] = useAsyncFn( async (params) => {
         const res = await axios ({
             method: 'get',
             baseURL: 'http://localhost:3000',
@@ -26,13 +44,22 @@ export const Profile = () => {
         })
         return res.data
     })
-        
-    useEffect(() => {
-        doFetch({ gameTime: currentDate })
-    }, [currentDate])
-    
 
-    // Se estiver deslogado vai para login "/"
+    // Verifica se todas as informações estão carregadas para montar o card
+    const isLoading = games.loading || user.loading
+    const hasError =  games.error || user.error
+    const isDone = !isLoading && !hasError     
+
+
+    useEffect(() => {
+        fetchHunches()
+    }, [])
+
+    useEffect(() => {
+        fechGames({ gameTime: currentDate })
+    }, [currentDate])
+
+    // Se não tiver logado vai para home "/"
     if (!auth?.user?.id) {
         return <Navigate to="/" replace={true} />
     }
@@ -55,7 +82,7 @@ export const Profile = () => {
                             <Icon name="back" className="w-10" />   
                         </a>
                         <h3 className="text-2xl font-bold">
-                            { auth.user.name }
+                            { user.value.name }
                         </h3>
                     </div>
                 </section>
@@ -70,19 +97,22 @@ export const Profile = () => {
                     <div className="space-y-4">
                         
                         {/** Se loading mostra carregando jogos  */}
-                        {state.loading && 'Carregando jogos...'}
+                        {isLoading && 'Carregando jogos...'}
                         
                         {/** Se deu erro em loading mostra msn de erro  */}
-                        {state.error && 'Ops! Algo deu errado'}
+                        {hasError && 'Ops! Algo deu errado'}
                         
                         {/** Se terminou o loading e não deu erro, Renderiza na tela todos os jogos da API  */}
-                        {!state.loading && !state.error && state.value?.map(game => (
+                        {isDone && games.value?.map(game => (
                             <Card
                                 key={game.id}
                                 gameId={ game.id }
                                 homeTeam={ game.homeTeam }
                                 awayTem={ game.awayTeam }
                                 gameTime={ format(new Date(game.gameTime), 'HH:mm') }
+                                homeTeamScore={hunches?.value?.[game.id]?.homeTeamScore || ''}
+                                awayTeamScore={hunches?.value?.[game.id]?.awayTeamScore || ''}
+                                disabled={true}
                             />
                         ))}
                         

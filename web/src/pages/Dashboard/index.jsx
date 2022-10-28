@@ -3,8 +3,7 @@ import { useAsyncFn, useLocalStorage } from 'react-use'
 import { Navigate } from 'react-router-dom'
 
 import axios from 'axios'
-import { format } from 'date-fns'
-import { formatISO } from 'date-fns/esm'
+import { format, formatISO } from 'date-fns'
 
 import { Icon, Card, DateSelect } from "~/components"
 
@@ -14,9 +13,23 @@ export const Dashboard = () => {
 
     // Pega user e password armazenado no browser
     const [auth] = useLocalStorage('auth', {})
+
+    const [hunches, fetchHunches] = useAsyncFn(async () => {
+        const res = await axios ({
+            method: 'get',
+            baseURL: 'http://localhost:3000',
+            url: `/${auth.user.username}`
+        })
+        const hunches = res.data.reduce((acc, hunch) => {
+            acc[hunch.gameId] = hunch
+            return acc
+        }, {})
+
+        return hunches
+    })
     
     // Busca todos os jogos da API
-    const [state, doFetch] = useAsyncFn( async (params) => {
+    const [games, fechGames] = useAsyncFn( async (params) => {
         const res = await axios ({
             method: 'get',
             baseURL: 'http://localhost:3000',
@@ -26,8 +39,18 @@ export const Dashboard = () => {
         return res.data
     })
 
+    // Verifica se todas as informações estão carregadas para montar o card
+    const isLoading = games.loading || hunches.loading
+    const hasError =  games.error || hunches.error
+    const isDone = !isLoading && !hasError     
+
+
     useEffect(() => {
-        doFetch({ gameTime: currentDate })
+        fetchHunches()
+    }, [])
+
+    useEffect(() => {
+        fechGames({ gameTime: currentDate })
     }, [currentDate])
 
     // Se não tiver logado vai para home "/"
@@ -40,7 +63,7 @@ export const Dashboard = () => {
             <header className="bg-red-500 text-white p-4">
                 <div className="container max-w-3xl flex justify-between p-4">
                     <img src="/images/logo-fundo-vermelho.svg" className="w-28 md:w-40"/> 
-                    <a href="/profile">
+                    <a href={`/${auth?.user?.username}`}>
                         <Icon name="profile" className="w-10" />
                     </a>
                 </div>
@@ -63,19 +86,21 @@ export const Dashboard = () => {
                     <div className="space-y-4">
                         
                         {/** Se loading mostra carregando jogos  */}
-                        {state.loading && 'Carregando jogos...'}
+                        {isLoading && 'Carregando jogos...'}
                         
                         {/** Se deu erro em loading mostra msn de erro  */}
-                        {state.error && 'Ops! Algo deu errado'}
+                        {hasError && 'Ops! Algo deu errado'}
                         
                         {/** Se terminou o loading e não deu erro, Renderiza na tela todos os jogos da API  */}
-                        {!state.loading && !state.error && state.value?.map(game => (
+                        {isDone && games.value?.map(game => (
                             <Card
                                 key={game.id}
                                 gameId={ game.id }
                                 homeTeam={ game.homeTeam }
                                 awayTem={ game.awayTeam }
                                 gameTime={ format(new Date(game.gameTime), 'HH:mm') }
+                                homeTeamScore={hunches?.value?.[game.id]?.homeTeamScore || ''}
+                                awayTeamScore={hunches?.value?.[game.id]?.awayTeamScore || ''}
                             />
                         ))}
                         
