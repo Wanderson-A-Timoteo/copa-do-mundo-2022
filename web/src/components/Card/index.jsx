@@ -5,11 +5,11 @@ import { useLocalStorage } from 'react-use'
 
 const validationSchema = yup.object().shape({
     homeTeamScore: yup.string().required(),
-    awayTemScore: yup.string().required()
+    awayTeamScore: yup.string().required()
 })
 
 
-export const Card = ({ disabled, gameId, homeTeam, awayTem, homeTeamScore, awayTemScore, gameTime }) => {
+export const Card = ({ disabled, gameId, homeTeam, awayTeam, homeTeamScore, awayTeamScore, gameTime }) => {
 
     const [auth] = useLocalStorage('auth')
 
@@ -17,7 +17,7 @@ export const Card = ({ disabled, gameId, homeTeam, awayTem, homeTeamScore, awayT
         onSubmit: (values) => {
             axios({
                 method: 'post',
-                baseURL: 'http://localhost:3000',
+                baseURL: import.meta.env.VITE_API_URL,
                 url: '/hunches',
                 headers: {
                     authorization: `Bearer ${auth.accessToken}`
@@ -30,7 +30,7 @@ export const Card = ({ disabled, gameId, homeTeam, awayTem, homeTeamScore, awayT
         },
         initialValues: {
             homeTeamScore,
-            awayTemScore
+            awayTeamScore
         },
         validationSchema
     })
@@ -56,15 +56,15 @@ export const Card = ({ disabled, gameId, homeTeam, awayTem, homeTeamScore, awayT
                 <input 
                     className="pl-2 bg-red-300 w-[55px] h-[55px] text-red-700 text-xl bg-red-300/[0.2]"
                     type="number" 
-                    name="awayTemScore"
-                    value={formik.values.awayTemScore}
+                    name="awayTeamScore"
+                    value={formik.values.awayTeamScore}
                     onChange={formik.handleChange}
                     onBlur={formik.handleSubmit}
                     disabled={disabled}
                 />
                 
-                <img src={`/images/flags/${awayTem}.png`} />
-                <span className="uppercase">{awayTem}</span>
+                <img src={`/images/flags/${awayTeam}.png`} />
+                <span className="uppercase">{awayTeam}</span>
             </form>
         </div>
     )

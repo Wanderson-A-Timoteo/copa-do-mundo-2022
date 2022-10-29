@@ -14,25 +14,28 @@ export const Dashboard = () => {
     // Pega user e password armazenado no browser
     const [auth] = useLocalStorage('auth', {})
 
-    const [hunches, fetchHunches] = useAsyncFn(async () => {
+    const [{ value: user, loading, error}, fetchHunches] = useAsyncFn(async () => {
         const res = await axios ({
             method: 'get',
-            baseURL: 'http://localhost:3000',
+            baseURL: import.meta.env.VITE_API_URL,
             url: `/${auth.user.username}`
         })
-        const hunches = res.data.reduce((acc, hunch) => {
+        const hunches = res.data.hunches.reduce((acc, hunch) => {
             acc[hunch.gameId] = hunch
             return acc
         }, {})
 
-        return hunches
+        return {
+            ...res.data,
+            hunches
+        }
     })
     
     // Busca todos os jogos da API
     const [games, fechGames] = useAsyncFn( async (params) => {
         const res = await axios ({
             method: 'get',
-            baseURL: 'http://localhost:3000',
+            baseURL: import.meta.env.VITE_API_URL,
             url: '/games',
             params
         })
@@ -40,8 +43,8 @@ export const Dashboard = () => {
     })
 
     // Verifica se todas as informações estão carregadas para montar o card
-    const isLoading = games.loading || hunches.loading
-    const hasError =  games.error || hunches.error
+    const isLoading = games.loading || loading
+    const hasError =  games.error || error
     const isDone = !isLoading && !hasError     
 
 
@@ -97,10 +100,10 @@ export const Dashboard = () => {
                                 key={game.id}
                                 gameId={ game.id }
                                 homeTeam={ game.homeTeam }
-                                awayTem={ game.awayTeam }
+                                awayTeam={ game.awayTeam }
                                 gameTime={ format(new Date(game.gameTime), 'HH:mm') }
-                                homeTeamScore={hunches?.value?.[game.id]?.homeTeamScore || ''}
-                                awayTeamScore={hunches?.value?.[game.id]?.awayTeamScore || ''}
+                                homeTeamScore={user?.hunches?.[game.id]?.homeTeamScore || ''}
+                                awayTeamScore={user?.hunches?.[game.id]?.awayTeamScore || ''}
                             />
                         ))}
                         
