@@ -9,8 +9,8 @@ export const DateSelect = ({ currentDate, onChange }) => {
     const date = new Date(currentDate)
 
     const prevDay = () => {
-        const nextDate = subDays(date, 1)
-        onChange(formatISO(nextDate)) 
+        const prevDate = subDays(date, 1)
+        onChange(formatISO(prevDate)) 
     }
 
     const nextDay = () => {

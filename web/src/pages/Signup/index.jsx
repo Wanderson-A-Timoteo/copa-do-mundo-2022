@@ -26,7 +26,17 @@ export const Signup = () => {
                 data: values
             })
 
-            console.log(res.data)
+            const result = await axios({
+                method: 'get',
+                baseURL: import.meta.env.VITE_API_URL,
+                url: '/login',
+                auth: {
+                    username: values.email,
+                    password: values.password
+                }
+            })
+
+           setAuth(result.data)
         },
         initialValues: {
             name: '',
@@ -37,7 +47,7 @@ export const Signup = () => {
         validationSchema
     })
 
-    if (auth.user?.id) {
+    if (auth?.user?.id) {
         return <Navigate to="/dashboard" replace={true} />
     }
     
