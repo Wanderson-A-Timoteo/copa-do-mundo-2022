@@ -20,7 +20,7 @@ export const Card = ({ disabled, gameId, homeTeam, awayTeam, homeTeamScore, away
                 baseURL: import.meta.env.VITE_API_URL,
                 url: '/hunches',
                 headers: {
-                    authorization: `Bearer ${auth.accessToken}`
+                    authorization: `Bearer ${auth.acessToken}`
                 },
                 data: {
                     ...values,
@@ -44,8 +44,9 @@ export const Card = ({ disabled, gameId, homeTeam, awayTeam, homeTeamScore, away
                 <img src={`/images/flags/${homeTeam}.png`} />
                 
                 <input 
-                    className="pl-2 bg-red-300 w-[55px] h-[55px] text-red-700 text-xl bg-red-300/[0.2]"
-                    type="number" 
+                    className="pl-4 w-[55px] h-[55px] text-red-700 text-xl bg-red-300/[0.2]"
+                    type="number hidden" 
+                    min="0"
                     name="homeTeamScore"
                     value={formik.values.homeTeamScore}
                     onChange={formik.handleChange}
@@ -54,8 +55,9 @@ export const Card = ({ disabled, gameId, homeTeam, awayTeam, homeTeamScore, away
                 />
                 <span className="text-red-500 font-bold">x</span>
                 <input 
-                    className="pl-2 bg-red-300 w-[55px] h-[55px] text-red-700 text-xl bg-red-300/[0.2]"
-                    type="number" 
+                    className="pl-4 w-[55px] h-[55px] text-red-700 text-xl bg-red-300/[0.2]"
+                    type="number hidden" 
+                    min="0"
                     name="awayTeamScore"
                     value={formik.values.awayTeamScore}
                     onChange={formik.handleChange}
