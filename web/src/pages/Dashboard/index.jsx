@@ -48,12 +48,14 @@ export const Dashboard = () => {
     const isDone = !isLoading && !hasError     
 
 
-    useEffect(() => {
-        fetchHunches()
-    }, [])
+    // useEffect(() => {
+    //     fetchHunches()
+    // }, [])
 
+    // fetchHunches() foi add para manter o palpite quando navegamos para outra data e retornamos 
     useEffect(() => {
         fechGames({ gameTime: currentDate })
+        fetchHunches()
     }, [currentDate])
 
     // Se não tiver logado vai para home "/"
